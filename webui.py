@@ -143,11 +143,13 @@ with shared.gradio_root:
                             ip_weights = []
                             ip_ctrls = []
                             ip_ad_cols = []
+
                             for _ in range(5):
                                 with gr.Column():
                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
                                     ip_images.append(ip_image)
                                     ip_ctrls.append(ip_image)
+                                    # hello
                                     # with gr.Column(visible=False) as ad_col:
                                     #     with gr.Row():
                                     #         default_end, default_weight = flags.default_parameters[flags.default_ip]
