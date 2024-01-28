@@ -134,8 +134,8 @@ def worker():
         loras = [[str(args.pop()), float(args.pop())] for _ in range(5)]
         input_image_checkbox = args.pop()
         current_tab = args.pop()
-        uov_method = args.pop()
-        uov_input_image = args.pop()
+        uov_method = flags.disabled
+        uov_input_image = None
         outpaint_selections = args.pop()
         inpaint_input_image = args.pop()
         inpaint_additional_prompt = args.pop()
@@ -153,7 +153,7 @@ def worker():
         outpaint_selections = [o.lower() for o in outpaint_selections]
         base_model_additional_loras = []
         raw_style_selections = copy.deepcopy(style_selections)
-        uov_method = uov_method.lower()
+        # uov_method = uov_method.lower()
 
         if fooocus_expansion in style_selections:
             use_expansion = True

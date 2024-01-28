@@ -135,6 +135,13 @@ with shared.gradio_root:
                 advanced_checkbox = gr.Checkbox(label='Advanced', value=modules.config.default_advanced_checkbox, container=False, elem_classes='min_check')
             with gr.Row(visible=False) as image_input_panel:
                 with gr.Tabs():
+                    with gr.TabItem(label='Upscale or Variation') as uov_tab:
+                        with gr.Row():
+                            with gr.Column():
+                                uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
+                            with gr.Column():
+                                uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
+                                gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
                     with gr.TabItem(label='Image Prompt') as ip_tab:
                         with gr.Row():
                             ip_images = []
@@ -178,18 +185,18 @@ with shared.gradio_root:
                         ip_advanced.change(ip_advance_checked, inputs=ip_advanced,
                                            outputs=ip_ad_cols + ip_types + ip_stops + ip_weights,
                                            queue=False, show_progress=False)
-                    with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
-                        with gr.Row():
-                            inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
-                            inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
+                    # with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
+                    #     with gr.Row():
+                    #         inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
+                    #         inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
 
-                        with gr.Row():
-                            inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
-                            outpaint_selections = gr.CheckboxGroup(choices=['Left', 'Right', 'Top', 'Bottom'], value=[], label='Outpaint Direction')
-                            inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
-                        example_inpaint_prompts = gr.Dataset(samples=modules.config.example_inpaint_prompts, label='Additional Prompt Quick List', components=[inpaint_additional_prompt], visible=False)
-                        gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
-                        example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
+                    #     with gr.Row():
+                    #         inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
+                    #         outpaint_selections = gr.CheckboxGroup(choices=['Left', 'Right', 'Top', 'Bottom'], value=[], label='Outpaint Direction')
+                    #         inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
+                    #     example_inpaint_prompts = gr.Dataset(samples=modules.config.example_inpaint_prompts, label='Additional Prompt Quick List', components=[inpaint_additional_prompt], visible=False)
+                    #     gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
+                    #     example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
                     with gr.TabItem(label='Describe') as desc_tab:
                         with gr.Row():
                             with gr.Column():
@@ -209,8 +216,8 @@ with shared.gradio_root:
             ip_advanced.change(lambda: None, queue=False, show_progress=False, _js=down_js)
 
             current_tab = gr.Textbox(value='uov', visible=False)
-            # uov_tab.select(lambda: 'uov', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
-            inpaint_tab.select(lambda: 'inpaint', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
+            uov_tab.select(lambda: 'uov', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
+            # inpaint_tab.select(lambda: 'inpaint', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
             ip_tab.select(lambda: 'ip', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
             desc_tab.select(lambda: 'desc', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
 
@@ -427,9 +434,9 @@ with shared.gradio_root:
                                          inpaint_strength, inpaint_respective_field,
                                          inpaint_mask_upload_checkbox, invert_mask_checkbox, inpaint_erode_or_dilate]
 
-                        inpaint_mask_upload_checkbox.change(lambda x: gr.update(visible=x),
-                                                           inputs=inpaint_mask_upload_checkbox,
-                                                           outputs=inpaint_mask_image, queue=False, show_progress=False)
+                        # inpaint_mask_upload_checkbox.change(lambda x: gr.update(visible=x),
+                        #                                    inputs=inpaint_mask_upload_checkbox,
+                        #                                    outputs=inpaint_mask_image, queue=False, show_progress=False)
 
                     with gr.Tab(label='FreeU'):
                         freeu_enabled = gr.Checkbox(label='Enabled', value=False)
@@ -506,11 +513,11 @@ with shared.gradio_root:
                 False, modules.config.default_inpaint_engine_version, 1.0, 0.618
             ]
 
-        inpaint_mode.input(inpaint_mode_change, inputs=inpaint_mode, outputs=[
-            inpaint_additional_prompt, outpaint_selections, example_inpaint_prompts,
-            inpaint_disable_initial_latent, inpaint_engine,
-            inpaint_strength, inpaint_respective_field
-        ], show_progress=False, queue=False)
+        # inpaint_mode.input(inpaint_mode_change, inputs=inpaint_mode, outputs=[
+        #     inpaint_additional_prompt, outpaint_selections, example_inpaint_prompts,
+        #     inpaint_disable_initial_latent, inpaint_engine,
+        #     inpaint_strength, inpaint_respective_field
+        # ], show_progress=False, queue=False)
 
         ctrls = [
             prompt, negative_prompt, style_selections,
@@ -519,8 +526,8 @@ with shared.gradio_root:
 
         ctrls += [base_model, refiner_model, refiner_switch] + lora_ctrls
         ctrls += [input_image_checkbox, current_tab]
-        # ctrls += [uov_method, uov_input_image]
-        ctrls += [outpaint_selections, inpaint_input_image, inpaint_additional_prompt, inpaint_mask_image]
+        ctrls += [uov_method, uov_input_image]
+        # ctrls += [outpaint_selections, inpaint_input_image, inpaint_additional_prompt, inpaint_mask_image]
         ctrls += ip_ctrls
 
         state_is_generating = gr.State(False)
