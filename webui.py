@@ -130,10 +130,13 @@ with shared.gradio_root:
                     stop_button.click(stop_clicked, outputs=[skip_button, stop_button],
                                       queue=False, show_progress=False, _js='cancelGenerateForever')
                     skip_button.click(skip_clicked, queue=False, show_progress=False)
-            with gr.Row(elem_classes='advanced_check_row'):
-                input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False, elem_classes='min_check')
-                advanced_checkbox = gr.Checkbox(label='Advanced', value=modules.config.default_advanced_checkbox, container=False, elem_classes='min_check')
-            with gr.Row(visible=False) as image_input_panel:
+            # with gr.Row(elem_classes='advanced_check_row'):
+                # input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False, elem_classes='min_check')
+                # advanced_checkbox = gr.Checkbox(label='Advanced', value=modules.config.default_advanced_checkbox, container=False, elem_classes='min_check')
+            with gr.Row(visible=True) as image_number_panel:
+                image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
+            
+            with gr.Row(visible=True) as image_input_panel:
                 with gr.Tabs():
                     with gr.TabItem(label='Image Prompt') as ip_tab:
                         with gr.Row():
@@ -204,8 +207,8 @@ with shared.gradio_root:
             switch_js = "(x) => {if(x){viewer_to_bottom(100);viewer_to_bottom(500);}else{viewer_to_top();} return x;}"
             down_js = "() => {viewer_to_bottom();}"
 
-            input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
-                                        outputs=image_input_panel, queue=False, show_progress=False, _js=switch_js)
+            # input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
+            #                             outputs=image_input_panel, queue=False, show_progress=False, _js=switch_js)
             ip_advanced.change(lambda: None, queue=False, show_progress=False, _js=down_js)
 
             current_tab = gr.Textbox(value='ip', visible=False)
@@ -222,11 +225,10 @@ with shared.gradio_root:
                 aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                                    value=modules.config.default_aspect_ratio, info='width × height',
                                                    elem_classes='aspect_ratios')
-                image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
-                negative_prompt = gr.Textbox(label='Negative Prompt', show_label=True, placeholder="Type prompt here.",
-                                             info='Describing what you do not want to see.', lines=2,
-                                             elem_id='negative_prompt',
-                                             value=modules.config.default_prompt_negative)
+                # negative_prompt = gr.Textbox(label='Negative Prompt', show_label=True, placeholder="Type prompt here.",
+                #                              info='Describing what you do not want to see.', lines=2,
+                #                              elem_id='negative_prompt',
+                #                              value=modules.config.default_prompt_negative)
                 seed_random = gr.Checkbox(label='Random', value=True)
                 image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
 
@@ -472,12 +474,12 @@ with shared.gradio_root:
                                      outputs=[
                                          guidance_scale, sharpness, adm_scaler_end, adm_scaler_positive,
                                          adm_scaler_negative, refiner_switch, refiner_model, sampler_name,
-                                         scheduler_name, adaptive_cfg, refiner_swap_method, negative_prompt
+                                         scheduler_name, adaptive_cfg, refiner_swap_method
                                      ], queue=False, show_progress=False)
 
-        advanced_checkbox.change(lambda x: gr.update(visible=x), advanced_checkbox, advanced_column,
-                                 queue=False, show_progress=False) \
-            .then(fn=lambda: None, _js='refresh_grid_delayed', queue=False, show_progress=False)
+        # advanced_checkbox.change(lambda x: gr.update(visible=x), advanced_checkbox, advanced_column,
+        #                          queue=False, show_progress=False) \
+            # .then(fn=lambda: None, _js='refresh_grid_delayed', queue=False, show_progress=False)
 
         def inpaint_mode_change(mode):
             assert mode in modules.flags.inpaint_options
@@ -513,12 +515,12 @@ with shared.gradio_root:
         # ], show_progress=False, queue=False)
 
         ctrls = [
-            prompt, negative_prompt, style_selections,
+            prompt,  style_selections,
             performance_selection, aspect_ratios_selection, image_number, image_seed, sharpness, guidance_scale
         ]
 
         ctrls += [base_model, refiner_model, refiner_switch] + lora_ctrls
-        ctrls += [input_image_checkbox, current_tab]
+        ctrls += [current_tab]
         # ctrls += [uov_method, uov_input_image]
         # ctrls += [outpaint_selections, inpaint_input_image, inpaint_additional_prompt, inpaint_mask_image]
         ctrls += ip_ctrls
@@ -547,10 +549,8 @@ with shared.gradio_root:
         prompt.input(parse_meta, inputs=[prompt, state_is_generating], outputs=[prompt, generate_button, load_parameter_button], queue=False, show_progress=False)
 
         load_parameter_button.click(modules.meta_parser.load_parameter_button_click, inputs=[prompt, state_is_generating], outputs=[
-            advanced_checkbox,
             image_number,
             prompt,
-            negative_prompt,
             style_selections,
             performance_selection,
             aspect_ratios_selection,

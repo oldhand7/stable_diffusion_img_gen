@@ -120,7 +120,7 @@ def worker():
         args.reverse()
 
         prompt = args.pop()
-        negative_prompt = args.pop()
+        negative_prompt = "a man who doesn't looks the man in image prompt"
         style_selections = args.pop()
         performance_selection = args.pop()
         aspect_ratios_selection = args.pop()
@@ -132,7 +132,7 @@ def worker():
         refiner_model_name = args.pop()
         refiner_switch = args.pop()
         loras = [[str(args.pop()), float(args.pop())] for _ in range(5)]
-        input_image_checkbox = args.pop()
+        input_image_checkbox = True
         current_tab = args.pop()
         uov_method = flags.disabled
         uov_input_image = None
