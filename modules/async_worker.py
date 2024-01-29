@@ -120,7 +120,7 @@ def worker():
         args.reverse()
 
         prompt = args.pop()
-        negative_prompt = "a man who doesn't looks the man in image prompt"
+        negative_prompt = "a man who isn't similar to the man below"
         style_selections = args.pop()
         performance_selection = args.pop()
         aspect_ratios_selection = args.pop()
@@ -148,9 +148,9 @@ def worker():
         cn_tasks = {x: [] for x in flags.ip_list}
         for _ in range(4):
             cn_img = args.pop()
-            args.pop()
-            args.pop()
-            args.pop()
+            # args.pop()
+            # args.pop()
+            # args.pop()
             cn_stop = 0.9
             cn_weight = 0.8
             cn_type = flags.cn_ip_face
