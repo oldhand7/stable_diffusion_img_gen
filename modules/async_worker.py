@@ -136,17 +136,24 @@ def worker():
         current_tab = args.pop()
         uov_method = flags.disabled
         uov_input_image = None
-        outpaint_selections = args.pop()
-        inpaint_input_image = args.pop()
-        inpaint_additional_prompt = args.pop()
-        inpaint_mask_image_upload = args.pop()
+
+# inpaint params
+        outpaint_selections = []
+        inpaint_input_image = None
+        inpaint_additional_prompt = ''
+
+
+        inpaint_mask_image_upload = None
 
         cn_tasks = {x: [] for x in flags.ip_list}
         for _ in range(4):
             cn_img = args.pop()
-            cn_stop = args.pop()
-            cn_weight = args.pop()
-            cn_type = args.pop()
+            args.pop()
+            args.pop()
+            args.pop()
+            cn_stop = 0.9
+            cn_weight = 0.8
+            cn_type = flags.cn_ip_face
             if cn_img is not None:
                 cn_tasks[cn_type].append([cn_img, cn_stop, cn_weight])
 
