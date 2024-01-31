@@ -120,7 +120,7 @@ def worker():
         args.reverse()
 
         prompt = args.pop()
-        negative_prompt = "a man who isn't similar to the man below"
+        negative_prompt = "a man who doesn't looks the man in image prompt"
         style_selections = args.pop()
         performance_selection = args.pop()
         aspect_ratios_selection = args.pop()
