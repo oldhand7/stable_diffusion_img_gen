@@ -34,7 +34,7 @@ def worker():
     import modules.advanced_parameters as advanced_parameters
     import extras.ip_adapter as ip_adapter
     import extras.face_crop
-    import fooocus_version
+    import btgen_version as btgen_version
 
     from modules.sdxl_styles import apply_style, apply_wildcards, fooocus_expansion
     from modules.private_logger import log
@@ -176,6 +176,7 @@ def worker():
 
         assert performance_selection in ['Speed', 'Quality', 'Extreme Speed']
 
+        # performance_selection = 'Extreme Speed'
         steps = 30
 
         if performance_selection == 'Speed':
@@ -518,7 +519,7 @@ def worker():
 
             if direct_return:
                 d = [('Upscale (Fast)', '2x')]
-                log(uov_input_image, d)
+                # log(uov_input_image, d)
                 yield_result(async_task, uov_input_image, do_not_show_finished_images=True)
                 return
 
@@ -805,8 +806,8 @@ def worker():
                     for li, (n, w) in enumerate(loras):
                         if n != 'None':
                             d.append((f'LoRA {li + 1}', f'{n} : {w}'))
-                    d.append(('Version', 'v' + fooocus_version.version))
-                    log(x, d)
+                    d.append(('Version', 'v' + btgen_version.version))
+                    # log(x, d)
 
                 yield_result(async_task, imgs, do_not_show_finished_images=len(tasks) == 1)
             except ldm_patched.modules.model_management.InterruptProcessingException as e:
