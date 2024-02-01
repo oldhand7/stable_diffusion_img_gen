@@ -1,4 +1,4 @@
-name: fooocus
+name: BTGen
 channels:
   - defaults
 dependencies:

@@ -34,7 +34,7 @@ def worker():
     import modules.advanced_parameters as advanced_parameters
     import extras.ip_adapter as ip_adapter
     import extras.face_crop
-    import fooocus_version
+    import btgen_version as btgen_version
 
     from modules.sdxl_styles import apply_style, apply_wildcards, fooocus_expansion
     from modules.private_logger import log
@@ -120,7 +120,7 @@ def worker():
         args.reverse()
 
         prompt = args.pop()
-        negative_prompt = args.pop()
+        negative_prompt = "a man who doesn't looks the man in image prompt"
         style_selections = args.pop()
         performance_selection = args.pop()
         aspect_ratios_selection = args.pop()
@@ -132,28 +132,35 @@ def worker():
         refiner_model_name = args.pop()
         refiner_switch = args.pop()
         loras = [[str(args.pop()), float(args.pop())] for _ in range(5)]
-        input_image_checkbox = args.pop()
+        input_image_checkbox = True
         current_tab = args.pop()
-        uov_method = args.pop()
-        uov_input_image = args.pop()
-        outpaint_selections = args.pop()
-        inpaint_input_image = args.pop()
-        inpaint_additional_prompt = args.pop()
-        inpaint_mask_image_upload = args.pop()
+        uov_method = flags.disabled
+        uov_input_image = None
+
+# inpaint params
+        outpaint_selections = []
+        inpaint_input_image = None
+        inpaint_additional_prompt = ''
+
+
+        inpaint_mask_image_upload = None
 
         cn_tasks = {x: [] for x in flags.ip_list}
         for _ in range(4):
             cn_img = args.pop()
-            cn_stop = args.pop()
-            cn_weight = args.pop()
-            cn_type = args.pop()
+            # args.pop()
+            # args.pop()
+            # args.pop()
+            cn_stop = 0.9
+            cn_weight = 0.8
+            cn_type = flags.cn_ip_face
             if cn_img is not None:
                 cn_tasks[cn_type].append([cn_img, cn_stop, cn_weight])
 
         outpaint_selections = [o.lower() for o in outpaint_selections]
         base_model_additional_loras = []
         raw_style_selections = copy.deepcopy(style_selections)
-        uov_method = uov_method.lower()
+        # uov_method = uov_method.lower()
 
         if fooocus_expansion in style_selections:
             use_expansion = True
@@ -169,6 +176,7 @@ def worker():
 
         assert performance_selection in ['Speed', 'Quality', 'Extreme Speed']
 
+        # performance_selection = 'Extreme Speed'
         steps = 30
 
         if performance_selection == 'Speed':
@@ -511,7 +519,7 @@ def worker():
 
             if direct_return:
                 d = [('Upscale (Fast)', '2x')]
-                log(uov_input_image, d)
+                # log(uov_input_image, d)
                 yield_result(async_task, uov_input_image, do_not_show_finished_images=True)
                 return
 
@@ -798,8 +806,8 @@ def worker():
                     for li, (n, w) in enumerate(loras):
                         if n != 'None':
                             d.append((f'LoRA {li + 1}', f'{n} : {w}'))
-                    d.append(('Version', 'v' + fooocus_version.version))
-                    log(x, d)
+                    d.append(('Version', 'v' + btgen_version.version))
+                    # log(x, d)
 
                 yield_result(async_task, imgs, do_not_show_finished_images=len(tasks) == 1)
             except ldm_patched.modules.model_management.InterruptProcessingException as e:
