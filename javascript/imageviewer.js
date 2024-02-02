@@ -40,7 +40,7 @@ function updateOnBackgroundChange() {
 function all_gallery_buttons() {
     var allGalleryButtons = gradioApp().querySelectorAll('.image_gallery .thumbnails > .thumbnail-item.thumbnail-small');
     var visibleGalleryButtons = [];
-    allGalleryButtons.forEach(function(elem) {
+    allGalleryButtons.forEach(function (elem) {
         if (elem.parentElement.offsetParent) {
             visibleGalleryButtons.push(elem);
         }
@@ -63,7 +63,7 @@ function modalImageSwitch(offset) {
         var currentButton = selected_gallery_button();
 
         var result = -1;
-        galleryButtons.forEach(function(v, i) {
+        galleryButtons.forEach(function (v, i) {
             if (v == currentButton) {
                 result = i;
             }
@@ -78,7 +78,7 @@ function modalImageSwitch(offset) {
             if (modalImage.style.display === 'none') {
                 modal.style.setProperty('background-image', `url(${modalImage.src})`);
             }
-            setTimeout(function() {
+            setTimeout(function () {
                 modal.focus();
             }, 10);
         }
@@ -105,18 +105,18 @@ function modalPrevImage(event) {
 
 function modalKeyHandler(event) {
     switch (event.key) {
-    case "s":
-        saveImage();
-        break;
-    case "ArrowLeft":
-        modalPrevImage(event);
-        break;
-    case "ArrowRight":
-        modalNextImage(event);
-        break;
-    case "Escape":
-        closeModal();
-        break;
+        case "s":
+            saveImage();
+            break;
+        case "ArrowLeft":
+            modalPrevImage(event);
+            break;
+        case "ArrowRight":
+            modalNextImage(event);
+            break;
+        case "Escape":
+            closeModal();
+            break;
     }
 }
 
@@ -136,7 +136,7 @@ function setupImageForLightbox(e) {
     // For other browsers the event is click to make it possiblr to drag picture.
     var event = isFirefox ? 'mousedown' : 'click';
 
-    e.addEventListener(event, function(evt) {
+    e.addEventListener(event, function (evt) {
         if (evt.button == 1) {
             open(evt.target.src);
             evt.preventDefault();
@@ -176,7 +176,7 @@ function modalTileImageToggle(event) {
     event.stopPropagation();
 }
 
-onAfterUiUpdate(function() {
+onAfterUiUpdate(function () {
     var fullImg_preview = gradioApp().querySelectorAll('.image_gallery > div > img');
     if (fullImg_preview != null) {
         fullImg_preview.forEach(setupImageForLightbox);
@@ -184,7 +184,7 @@ onAfterUiUpdate(function() {
     updateOnBackgroundChange();
 });
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     //const modalFragment = document.createDocumentFragment();
     const modal = document.createElement('div');
     modal.onclick = closeModal;
