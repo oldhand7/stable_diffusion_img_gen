@@ -118,9 +118,11 @@ def worker():
 
         args = async_task.args
         args.reverse()
-
-        prompt = args.pop()
-        negative_prompt = "a man who doesn't looks the man in image prompt"
+        prompt = args.pop() + " displaying 10 or more very different colors and very different styles options suitable for the prompt occasions, on a full-length body, separate from user selfies and irrespective of one's current clothing preferences"
+        negative_prompt = '  naked,naked, bachelorette, underwearing, underweared, nuke, nudity, bachelor, bottomless, underwear, bikini ,  bikini ,  bikini ,  bikini ,  bikini ,  bikini , topless,underwearing, underweared, sexy, around current clothing,'
+        for _ in range(2):
+            negative_prompt += negative_prompt
+        print(negative_prompt)
         style_selections = args.pop()
         performance_selection = args.pop()
         aspect_ratios_selection = args.pop()
@@ -152,15 +154,16 @@ def worker():
             # args.pop()
             # args.pop()
             cn_stop = 0.9
-            cn_weight = 0.8
+            cn_weight = 0.7
             cn_type = flags.cn_ip_face
             if cn_img is not None:
                 cn_tasks[cn_type].append([cn_img, cn_stop, cn_weight])
 
+        print("cn_tasks----------------> ", cn_tasks)
+
         outpaint_selections = [o.lower() for o in outpaint_selections]
         base_model_additional_loras = []
         raw_style_selections = copy.deepcopy(style_selections)
-        # uov_method = uov_method.lower()
 
         if fooocus_expansion in style_selections:
             use_expansion = True
@@ -345,6 +348,7 @@ def worker():
 
         switch = int(round(steps * refiner_switch))
 
+        print("overwrite stpe -> ", advanced_parameters.overwrite_step)
         if advanced_parameters.overwrite_step > 0:
             steps = advanced_parameters.overwrite_step
 
@@ -412,6 +416,8 @@ def worker():
                 positive_basic_workloads = remove_empty_str(positive_basic_workloads, default=task_prompt)
                 negative_basic_workloads = remove_empty_str(negative_basic_workloads, default=task_negative_prompt)
 
+                print('------------', task_prompt,'------------', negative_basic_workloads, '------------',task_extra_positive_prompts,'------------', task_extra_negative_prompts)
+                
                 tasks.append(dict(
                     task_seed=task_seed,
                     task_prompt=task_prompt,
