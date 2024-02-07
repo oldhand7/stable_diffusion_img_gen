@@ -118,9 +118,11 @@ def worker():
 
         args = async_task.args
         args.reverse()
-
         prompt = args.pop() + " displaying 10 or more very different colors and very different styles options suitable for the prompt occasions, on a full-length body, separate from user selfies and irrespective of one's current clothing preferences"
-        negative_prompt = '  naked, bachelorette, underwearing, underweared, nuke, nudity, bachelor, bottomless underwear, bikini , topless, sexy, around current clothing'
+        negative_prompt = '  naked,naked, bachelorette, underwearing, underweared, nuke, nudity, bachelor, bottomless, underwear, bikini ,  bikini ,  bikini ,  bikini ,  bikini ,  bikini , topless,underwearing, underweared, sexy, around current clothing,'
+        for _ in range(2):
+            negative_prompt += negative_prompt
+        print(negative_prompt)
         style_selections = args.pop()
         performance_selection = args.pop()
         aspect_ratios_selection = args.pop()
@@ -157,10 +159,11 @@ def worker():
             if cn_img is not None:
                 cn_tasks[cn_type].append([cn_img, cn_stop, cn_weight])
 
+        print("cn_tasks----------------> ", cn_tasks)
+
         outpaint_selections = [o.lower() for o in outpaint_selections]
         base_model_additional_loras = []
         raw_style_selections = copy.deepcopy(style_selections)
-        # uov_method = uov_method.lower()
 
         if fooocus_expansion in style_selections:
             use_expansion = True
@@ -345,6 +348,7 @@ def worker():
 
         switch = int(round(steps * refiner_switch))
 
+        print("overwrite stpe -> ", advanced_parameters.overwrite_step)
         if advanced_parameters.overwrite_step > 0:
             steps = advanced_parameters.overwrite_step
 
