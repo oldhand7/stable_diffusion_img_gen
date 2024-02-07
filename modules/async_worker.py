@@ -48,7 +48,6 @@ def worker():
         flag = f'''App started successful. Use the app with {str(async_gradio_app.local_url)} or {str(async_gradio_app.server_name)}:{str(async_gradio_app.server_port)}'''
         if async_gradio_app.share:
             flag += f''' or {async_gradio_app.share_url}'''
-        print(flag)
     except Exception as e:
         print(e)
 
@@ -159,7 +158,6 @@ def worker():
             if cn_img is not None:
                 cn_tasks[cn_type].append([cn_img, cn_stop, cn_weight])
 
-        print("cn_tasks----------------> ", cn_tasks)
 
         outpaint_selections = [o.lower() for o in outpaint_selections]
         base_model_additional_loras = []
@@ -416,7 +414,6 @@ def worker():
                 positive_basic_workloads = remove_empty_str(positive_basic_workloads, default=task_prompt)
                 negative_basic_workloads = remove_empty_str(negative_basic_workloads, default=task_negative_prompt)
 
-                print('------------', task_prompt,'------------', negative_basic_workloads, '------------',task_extra_positive_prompts,'------------', task_extra_negative_prompts)
                 
                 tasks.append(dict(
                     task_seed=task_seed,
