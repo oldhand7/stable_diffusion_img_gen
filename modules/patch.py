@@ -441,7 +441,7 @@ def patched_load_models_gpu(*args, **kwargs):
     y = ldm_patched.modules.model_management.load_models_gpu_origin(*args, **kwargs)
     moving_time = time.perf_counter() - execution_start_time
     if moving_time > 0.1:
-        print(f'[Fooocus Model Management] Moving model(s) has taken {moving_time:.2f} seconds')
+        print(f'[BTGen Model Management] Moving model(s) has taken {moving_time:.2f} seconds')
     return y
 
 

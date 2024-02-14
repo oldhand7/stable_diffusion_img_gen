@@ -48,12 +48,10 @@ def worker():
         flag = f'''App started successful. Use the app with {str(async_gradio_app.local_url)} or {str(async_gradio_app.server_name)}:{str(async_gradio_app.server_port)}'''
         if async_gradio_app.share:
             flag += f''' or {async_gradio_app.share_url}'''
-        print(flag)
     except Exception as e:
         print(e)
 
     def progressbar(async_task, number, text):
-        print(f'[Fooocus] {text}')
         async_task.yields.append(['preview', (number, text, None)])
 
     def yield_result(async_task, imgs, do_not_show_finished_images=False):
@@ -107,7 +105,6 @@ def worker():
                     img = results[y * cols + x]
                     wall[y * H:y * H + H, x * W:x * W + W, :] = img
 
-        # must use deep copy otherwise gradio is super laggy. Do not use list.append() .
         async_task.results = async_task.results + [wall]
         return
 
@@ -119,10 +116,9 @@ def worker():
         args = async_task.args
         args.reverse()
         prompt = args.pop() + " displaying 10 or more very different colors and very different styles options suitable for the prompt occasions, on a full-length body, separate from user selfies and irrespective of one's current clothing preferences"
-        negative_prompt = '  naked,naked, bachelorette, underwearing, underweared, nuke, nudity, bachelor, bottomless, underwear, bikini ,  bikini ,  bikini ,  bikini ,  bikini ,  bikini , topless,underwearing, underweared, sexy, around current clothing,'
+        negative_prompt = '  Two-piece, Bikini briefs, Monokini, Tankini, Triangle bikini, Bandeau bikini,Halter-neck bikini, High-waisted bikini, naked,naked, bachelorette, underwearing, underweared, nuke, nudity, bachelor, bottomless, underwear, bikini ,  bikini ,  bikini ,  bikini ,  bikini ,  bikini , topless,underwearing, underweared,underwearing, underweared, sexy, around current clothing,'
         for _ in range(2):
             negative_prompt += negative_prompt
-        print(negative_prompt)
         style_selections = args.pop()
         performance_selection = args.pop()
         aspect_ratios_selection = args.pop()
@@ -159,7 +155,6 @@ def worker():
             if cn_img is not None:
                 cn_tasks[cn_type].append([cn_img, cn_stop, cn_weight])
 
-        print("cn_tasks----------------> ", cn_tasks)
 
         outpaint_selections = [o.lower() for o in outpaint_selections]
         base_model_additional_loras = []
@@ -179,7 +174,7 @@ def worker():
 
         assert performance_selection in ['Speed', 'Quality', 'Extreme Speed']
 
-        # performance_selection = 'Extreme Speed'
+        performance_selection = 'Extreme Speed'
         steps = 30
 
         if performance_selection == 'Speed':
@@ -416,7 +411,6 @@ def worker():
                 positive_basic_workloads = remove_empty_str(positive_basic_workloads, default=task_prompt)
                 negative_basic_workloads = remove_empty_str(negative_basic_workloads, default=task_negative_prompt)
 
-                print('------------', task_prompt,'------------', negative_basic_workloads, '------------',task_extra_positive_prompts,'------------', task_extra_negative_prompts)
                 
                 tasks.append(dict(
                     task_seed=task_seed,
@@ -435,7 +429,7 @@ def worker():
 
             if use_expansion:
                 for i, t in enumerate(tasks):
-                    progressbar(async_task, 5, f'Preparing Fooocus text #{i + 1} ...')
+                    progressbar(async_task, 5, f'Preparing BTGen text #{i + 1} ...')
                     expansion = pipeline.final_expansion(t['task_prompt'], t['task_seed'])
                     print(f'[Prompt Expansion] {expansion}')
                     t['expansion'] = expansion
@@ -792,7 +786,7 @@ def worker():
                     d = [
                         ('Prompt', task['log_positive_prompt']),
                         ('Negative Prompt', task['log_negative_prompt']),
-                        ('Fooocus V2 Expansion', task['expansion']),
+                        ('BTGen V2 Expansion', task['expansion']),
                         ('Styles', str(raw_style_selections)),
                         ('Performance', performance_selection),
                         ('Resolution', str((width, height))),
