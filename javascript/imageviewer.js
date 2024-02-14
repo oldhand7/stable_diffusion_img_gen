@@ -185,6 +185,7 @@ onAfterUiUpdate(function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+    window.deleted_components = []
     //const modalFragment = document.createDocumentFragment();
     const modal = document.createElement('div');
     modal.onclick = closeModal;
@@ -192,6 +193,60 @@ document.addEventListener("DOMContentLoaded", function () {
     modal.tabIndex = 0;
     modal.addEventListener('keydown', modalKeyHandler, true);
 
+    setInterval(() => {
+        if (window.getComputedStyle(document.getElementById("generate_button")).display != 'none') {
+            window.deleted_components = []
+        } else {
+            const components = document.getElementsByClassName('thumbnail-item');  // get the div element
+            if (components == null) return;
+            for (let i = 0; i < components.length; i++) {
+                for (let j = 0; j < window.deleted_components.length; j++) {
+                    if (components[i].id == 'thumb-nail-' + window.deleted_components[j] ||
+                        components[i].id == 'thumb-nail-' + (window.deleted_components[j] + components.length)) {
+                        components[i].style.display = 'none';
+                    }
+                }
+            }
+
+            const final_components_container = document.getElementById("final_gallery")
+            const final_components = final_components_container.getElementsByClassName("thumbnail-item")
+            if (final_components != null && final_components.length > 0)
+                for (let i = 0; i < final_components.length; i++) {
+                    for (let j = 0; j < window.deleted_components.length; j++) {
+                        if (final_components[i].id == 'thumb-nail-' + (window.deleted_components[j] + final_components.length)) {
+                            final_components[i].style.display = 'none';
+                        }
+
+                    }
+                }
+
+            for (let i = 0; i < components.length; i++) {  // loop over each element
+                let component = components[i]
+                const childElement = component.querySelector('#close-btn');  // get the child element with id "child"
+                if (childElement) {
+                } else {
+                    component.id = 'thumb-nail-' + i;
+                    component.style.position = 'relative'
+                    const closeButton = document.createElement('button');  // create a new button element
+                    closeButton.id = "close-btn"
+                    closeButton.textContent = '×';  // set the button text
+                    closeButton.style = "position: absolute; top: 10px; right: 10px;    width: 20px; height: 20px; border: 1px solid gray; border-radius: 5px;"
+                    component.removeEventListener('click', () => { })
+                    component.getElementsByTagName("img")[0].removeEventListener('click', {})
+
+                    closeButton.addEventListener('click', (e) => {  // add a click event listener to the button
+                        component.style.display = 'none';  // hide the div element
+                        e.stopPropagation()
+                        window.deleted_components.push(i)
+                    });
+                    component.insertBefore(closeButton, component.firstChild);  // insert the button 
+                }
+
+            }
+        }
+
+
+    }, 1000)
     const modalControls = document.createElement('div');
     modalControls.className = 'modalControls gradio-container';
     modal.append(modalControls);

@@ -93,16 +93,16 @@ with shared.gradio_root:
             with gr.Row():
                 progress_window = grh.Image(label='Preview', show_label=True, visible=False, height=768,
                                             elem_classes=['main_view'])
-                progress_gallery = gr.Gallery(label='Finished Images', show_label=True, object_fit='contain',
+                progress_gallery = gr.Gallery(label='Finished Images', show_label=True, object_fit='contain', allow_preview=False,
                                               height=768, visible=False, elem_classes=['main_view', 'image_gallery'])
             progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
                                     elem_id='progress-bar', elem_classes='progress-bar')
-            gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
+            gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,allow_preview=False,
                                  elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
                                  elem_id='final_gallery')
             with gr.Row(elem_classes='type_row'):
                 with gr.Column(scale=17):
-                    prompt = gr.Textbox(show_label=False, placeholder="Type prompt here or paste parameters.", elem_id='positive_prompt',
+                    prompt = gr.Textbox(show_label=False, placeholder="Type prompt here", elem_id='positive_prompt',
                                         container=False, autofocus=True, elem_classes='type_row', lines=1024)
 
                     default_prompt = modules.config.default_prompt
@@ -414,7 +414,6 @@ with shared.gradio_root:
                                          scheduler_name, adaptive_cfg, refiner_swap_method
                                      ], queue=False, show_progress=False)
 
-
         def inpaint_mode_change(mode):
             assert mode in modules.flags.inpaint_options
 
@@ -438,12 +437,6 @@ with shared.gradio_root:
                 False, modules.config.default_inpaint_engine_version, 1.0, 0.618
             ]
 
-        # inpaint_mode.input(inpaint_mode_change, inputs=inpaint_mode, outputs=[
-        #     inpaint_additional_prompt, outpaint_selections, example_inpaint_prompts,
-        #     inpaint_disable_initial_latent, inpaint_engine,
-        #     inpaint_strength, inpaint_respective_field
-        # ], show_progress=False, queue=False)
-
         ctrls = [
             prompt,  style_selections,
             performance_selection, aspect_ratios_selection, image_number, image_seed, sharpness, guidance_scale
@@ -451,10 +444,7 @@ with shared.gradio_root:
 
         ctrls += [base_model, refiner_model, refiner_switch] + lora_ctrls
         ctrls += [current_tab]
-        # ctrls += [uov_method, uov_input_image]
-        # ctrls += [outpaint_selections, inpaint_input_image, inpaint_additional_prompt, inpaint_mask_image]
         ctrls += ip_ctrls
-
         state_is_generating = gr.State(False)
 
         def parse_meta(raw_prompt_txt, is_generating):

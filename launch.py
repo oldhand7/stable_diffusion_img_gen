@@ -10,7 +10,7 @@ os.chdir(root)
 
 os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = "0.0"
-os.environ["GRADIO_SERVER_PORT"] = "7865"
+os.environ["GRADIO_SERVER_PORT"] = "8080"
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -35,7 +35,7 @@ def prepare_environment():
     requirements_file = os.environ.get('REQS_FILE', "requirements_versions.txt")
 
     print(f"Python {sys.version}")
-    print(f"Fooocus version: {btgen_version.version}")
+    print(f"BTGen version: {btgen_version.version}")
 
     if REINSTALL_ALL or not is_installed("torch") or not is_installed("torchvision"):
         run(f'"{python}" -m {torch_command}', "Installing torch and torchvision", "Couldn't install torch", live=True)
@@ -90,7 +90,7 @@ def download_models():
 
     load_file_from_url(
         url='https://huggingface.co/lllyasviel/misc/resolve/main/fooocus_expansion.bin',
-        model_dir=config.path_fooocus_expansion,
+        model_dir=config.path_btgen_expansion,
         file_name='pytorch_model.bin'
     )
 
@@ -103,7 +103,7 @@ def download_models():
             for alternative_model_name in config.previous_default_models:
                 if os.path.exists(os.path.join(config.path_checkpoints, alternative_model_name)):
                     print(f'You do not have [{config.default_base_model_name}] but you have [{alternative_model_name}].')
-                    print(f'Fooocus will use [{alternative_model_name}] to avoid downloading new models, '
+                    print(f'BTGen will use [{alternative_model_name}] to avoid downloading new models, '
                           f'but you are not using latest models.')
                     print('Use --always-download-new-model to avoid fallback and always get new models.')
                     config.checkpoint_downloads = {}
