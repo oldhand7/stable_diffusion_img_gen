@@ -116,7 +116,7 @@ def worker():
         args = async_task.args
         args.reverse()
         prompt = args.pop() + " displaying 10 or more very different colors and very different styles options suitable for the prompt occasions, on a full-length body, separate from user selfies and irrespective of one's current clothing preferences"
-        negative_prompt = '  Two-piece, Bikini briefs, Monokini, Tankini, Triangle bikini, Bandeau bikini,Halter-neck bikini, High-waisted bikini, naked,naked, bachelorette, underwearing, underweared, nuke, nudity, bachelor, bottomless, underwear, bikini ,  bikini ,  bikini ,  bikini ,  bikini ,  bikini , topless,underwearing, underweared,underwearing, underweared, sexy, around current clothing,'
+        negative_prompt = '   Two-piece, Bikini briefs, Monokini, Tankini, Triangle bikini, Bandeau bikini,Halter-neck bikini, High-waisted bikini, naked,naked, bachelorette, underwearing, underweared, nuke, nudity, bachelor, bottomless, underwear, bikini ,  bikini ,  bikini ,  bikini ,  bikini ,  bikini , topless,underwearing, underweared,underwearing, underweared, sexy, around current clothing,'
         for _ in range(2):
             negative_prompt += negative_prompt
         style_selections = args.pop()
