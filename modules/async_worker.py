@@ -115,7 +115,6 @@ def worker():
 
         args = async_task.args
         args.reverse()
-
         prompt = "women below with various,  suitable elegant color and style of clothes for " +  args.pop() + flags.default_prompt
         negative_prompt = flags.negative_prompt
         for _ in range(2):
