@@ -442,7 +442,7 @@ def process_diffusion(positive_cond, negative_cond, steps, switch, width, height
             previewer_start=0,
             previewer_end=steps
         )
-        print('Fooocus VAE-based swap.')
+        print('BTGenVAE-based swap.')
 
         target_model = target_refiner_unet
         if target_model is None:

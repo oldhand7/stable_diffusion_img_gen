@@ -115,8 +115,8 @@ def worker():
 
         args = async_task.args
         args.reverse()
-        prompt = args.pop() + " displaying 10 or more very different colors and very different styles options suitable for the prompt occasions, on a full-length body, separate from user selfies and irrespective of one's current clothing preferences"
-        negative_prompt = '   Two-piece, Bikini briefs, Monokini, Tankini, Triangle bikini, Bandeau bikini,Halter-neck bikini, High-waisted bikini, naked,naked, bachelorette, underwearing, underweared, nuke, nudity, bachelor, bottomless, underwear, bikini ,  bikini ,  bikini ,  bikini ,  bikini ,  bikini , topless,underwearing, underweared,underwearing, underweared, sexy, around current clothing,'
+        prompt = "women below with various,  suitable elegant color and style of clothes for " +  args.pop() + flags.default_prompt
+        negative_prompt = flags.negative_prompt
         for _ in range(2):
             negative_prompt += negative_prompt
         style_selections = args.pop()
@@ -174,7 +174,7 @@ def worker():
 
         assert performance_selection in ['Speed', 'Quality', 'Extreme Speed']
 
-        performance_selection = 'Extreme Speed'
+        # performance_selection = 'Extreme Speed'
         steps = 30
 
         if performance_selection == 'Speed':
@@ -677,6 +677,7 @@ def worker():
                 cn_img, cn_stop, cn_weight = task
                 cn_img = HWC3(cn_img)
 
+                print('********************* ', advanced_parameters.skipping_cn_preprocessor)
                 if not advanced_parameters.skipping_cn_preprocessor:
                     cn_img = extras.face_crop.crop_image(cn_img)
 

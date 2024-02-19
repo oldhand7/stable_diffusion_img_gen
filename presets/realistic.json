@@ -33,8 +33,8 @@
     "default_prompt_negative": "unrealistic, saturated, high contrast, big nose, painting, drawing, sketch, cartoon, anime, manga, render, CG, 3d, watermark, signature, label",
     "default_styles": [
         "Fooocus V2",
-        "Fooocus Photograph",
-        "Fooocus Negative"
+        "BTGenPhotograph",
+        "BTGenNegative"
     ],
     "default_aspect_ratio": "896*1152",
     "checkpoint_downloads": {
@@ -44,5 +44,7 @@
     "lora_downloads": {
         "SDXL_FILM_PHOTOGRAPHY_STYLE_BetaV0.4.safetensors": "https://huggingface.co/lllyasviel/fav_models/resolve/main/fav/SDXL_FILM_PHOTOGRAPHY_STYLE_BetaV0.4.safetensors"
     },
-    "previous_default_models": ["realisticStockPhoto_v10.safetensors"]
+    "previous_default_models": [
+        "realisticStockPhoto_v10.safetensors"
+    ]
 }
