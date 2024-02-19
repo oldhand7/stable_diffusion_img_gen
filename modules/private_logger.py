@@ -68,7 +68,7 @@ def log(img, dic):
         </script>"""
     )
 
-    begin_part = f"<html><head><title>Fooocus Log {date_string}</title>{css_styles}</head><body>{js}<p>Fooocus Log {date_string} (private)</p>\n<p>All images are clean, without any hidden data/meta, and safe to share with others.</p><!--fooocus-log-split-->\n\n"
+    begin_part = f"<html><head><title>BTGenLog {date_string}</title>{css_styles}</head><body>{js}<p>BTGenLog {date_string} (private)</p>\n<p>All images are clean, without any hidden data/meta, and safe to share with others.</p><!--fooocus-log-split-->\n\n"
     end_part = f'\n<!--fooocus-log-split--></body></html>'
 
     middle_part = log_cache.get(html_name, "")

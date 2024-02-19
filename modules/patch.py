@@ -470,8 +470,8 @@ def build_loaded(module, loader_name):
                         os.replace(path, corrupted_backup_file)
                         if os.path.exists(path):
                             os.remove(path)
-                        exp += f'Fooocus has tried to move the corrupted file to {corrupted_backup_file} \n'
-                        exp += f'You may try again now and Fooocus will download models again. \n'
+                        exp += f'BTGenhas tried to move the corrupted file to {corrupted_backup_file} \n'
+                        exp += f'You may try again now and BTGenwill download models again. \n'
             raise ValueError(exp)
         return result
 

@@ -515,17 +515,10 @@ with shared.gradio_root:
                 return default_interrogator_anime(img), ["BTGen V2", "BTGen Masterpiece"]
             return mode, ["BTGen V2"]
 
-        # desc_btn.click(trigger_describe, inputs=[desc_method, desc_input_image],
-        #                outputs=[prompt, style_selections], show_progress=True, queue=True)
-
 
 def dump_default_english_config():
     from modules.localization import dump_english_config
     dump_english_config(grh.all_components)
-
-
-# dump_default_english_config()
-
 
 
 
