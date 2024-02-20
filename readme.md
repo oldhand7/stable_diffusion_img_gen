@@ -17,6 +17,7 @@ BTGen has simplified the installation. Between pressing "download" and generatin
 # Run
 
 * install python
+* pip install -r requirements_versions.txt
 * python3 entry_with_update.py
 
 
