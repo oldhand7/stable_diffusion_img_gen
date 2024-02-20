@@ -1,4 +1,3 @@
-# https://github.com/city96/SD-Latent-Interposer/blob/main/interposer.py
 
 import os
 import torch

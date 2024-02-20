@@ -155,7 +155,6 @@ def clip_preprocess(image):
     std = torch.tensor([0.26862954, 0.26130258, 0.27577711], device=image.device, dtype=image.dtype).view([1, 3, 1, 1])
     image = image.movedim(-1, 1)
 
-    # https://github.com/tencent-ailab/IP-Adapter/blob/d580c50a291566bbf9fc7ac0f760506607297e6d/README.md?plain=1#L75
     B, C, H, W = image.shape
     assert H == 224 and W == 224
 

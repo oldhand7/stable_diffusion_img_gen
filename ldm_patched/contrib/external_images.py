@@ -1,4 +1,4 @@
-# https://github.com/comfyanonymous/ComfyUI/blob/master/nodes.py 
+
 
 import ldm_patched.contrib.external
 import ldm_patched.utils.path_utils

@@ -36,7 +36,7 @@ def worker():
     import extras.face_crop
     import btgen_version as btgen_version
 
-    from modules.sdxl_styles import apply_style, apply_wildcards, fooocus_expansion
+    from modules.sdxl_styles import apply_style, apply_wildcards, btgen_expansion
     from modules.private_logger import log
     from extras.expansion import safe_str
     from modules.util import remove_empty_str, HWC3, resize_image, \
@@ -147,9 +147,6 @@ def worker():
         cn_tasks = {x: [] for x in flags.ip_list}
         for _ in range(4):
             cn_img = args.pop()
-            # args.pop()
-            # args.pop()
-            # args.pop()
             cn_stop = 0.9
             cn_weight = 0.7
             cn_type = flags.cn_ip_face
@@ -161,9 +158,9 @@ def worker():
         base_model_additional_loras = []
         raw_style_selections = copy.deepcopy(style_selections)
 
-        if fooocus_expansion in style_selections:
+        if btgen_expansion in style_selections:
             use_expansion = True
-            style_selections.remove(fooocus_expansion)
+            style_selections.remove(btgen_expansion)
         else:
             use_expansion = False
 
@@ -175,35 +172,7 @@ def worker():
 
         assert performance_selection in ['Speed', 'Quality', 'Extreme Speed']
 
-        # performance_selection = 'Extreme Speed'
         steps = 30
-
-        if performance_selection == 'Speed':
-            steps = 30
-
-        if performance_selection == 'Quality':
-            steps = 60
-
-        if performance_selection == 'Extreme Speed':
-            print('Enter LCM mode.')
-            progressbar(async_task, 1, 'Downloading LCM components ...')
-            loras += [(modules.config.downloading_sdxl_lcm_lora(), 1.0)]
-
-            if refiner_model_name != 'None':
-                print(f'Refiner disabled in LCM mode.')
-
-            refiner_model_name = 'None'
-            sampler_name = advanced_parameters.sampler_name = 'lcm'
-            scheduler_name = advanced_parameters.scheduler_name = 'lcm'
-            modules.patch.sharpness = sharpness = 0.0
-            cfg_scale = guidance_scale = 1.0
-            modules.patch.adaptive_cfg = advanced_parameters.adaptive_cfg = 1.0
-            refiner_switch = 1.0
-            modules.patch.positive_adm_scale = advanced_parameters.adm_scaler_positive = 1.0
-            modules.patch.negative_adm_scale = advanced_parameters.adm_scaler_negative = 1.0
-            modules.patch.adm_scaler_end = advanced_parameters.adm_scaler_end = 0.0
-            steps = 8
-
         modules.patch.adaptive_cfg = advanced_parameters.adaptive_cfg
         print(f'[Parameters] Adaptive CFG = {modules.patch.adaptive_cfg}')
 
@@ -253,74 +222,6 @@ def worker():
         tasks = []
 
         if input_image_checkbox:
-            if (current_tab == 'uov' or (
-                    current_tab == 'ip' and advanced_parameters.mixing_image_prompt_and_vary_upscale)) \
-                    and uov_method != flags.disabled and uov_input_image is not None:
-                uov_input_image = HWC3(uov_input_image)
-                if 'vary' in uov_method:
-                    goals.append('vary')
-                elif 'upscale' in uov_method:
-                    goals.append('upscale')
-                    if 'fast' in uov_method:
-                        skip_prompt_processing = True
-                    else:
-                        steps = 18
-
-                        if performance_selection == 'Speed':
-                            steps = 18
-
-                        if performance_selection == 'Quality':
-                            steps = 36
-
-                        if performance_selection == 'Extreme Speed':
-                            steps = 8
-
-                    progressbar(async_task, 1, 'Downloading upscale models ...')
-                    modules.config.downloading_upscale_model()
-            if (current_tab == 'inpaint' or (
-                    current_tab == 'ip' and advanced_parameters.mixing_image_prompt_and_inpaint)) \
-                    and isinstance(inpaint_input_image, dict):
-                inpaint_image = inpaint_input_image['image']
-                inpaint_mask = inpaint_input_image['mask'][:, :, 0]
-                
-                if advanced_parameters.inpaint_mask_upload_checkbox:
-                    if isinstance(inpaint_mask_image_upload, np.ndarray):
-                        if inpaint_mask_image_upload.ndim == 3:
-                            H, W, C = inpaint_image.shape
-                            inpaint_mask_image_upload = resample_image(inpaint_mask_image_upload, width=W, height=H)
-                            inpaint_mask_image_upload = np.mean(inpaint_mask_image_upload, axis=2)
-                            inpaint_mask_image_upload = (inpaint_mask_image_upload > 127).astype(np.uint8) * 255
-                            inpaint_mask = np.maximum(inpaint_mask, inpaint_mask_image_upload)
-
-                if int(advanced_parameters.inpaint_erode_or_dilate) != 0:
-                    inpaint_mask = erode_or_dilate(inpaint_mask, advanced_parameters.inpaint_erode_or_dilate)
-
-                if advanced_parameters.invert_mask_checkbox:
-                    inpaint_mask = 255 - inpaint_mask
-
-                inpaint_image = HWC3(inpaint_image)
-                if isinstance(inpaint_image, np.ndarray) and isinstance(inpaint_mask, np.ndarray) \
-                        and (np.any(inpaint_mask > 127) or len(outpaint_selections) > 0):
-                    progressbar(async_task, 1, 'Downloading upscale models ...')
-                    modules.config.downloading_upscale_model()
-                    if inpaint_parameterized:
-                        progressbar(async_task, 1, 'Downloading inpainter ...')
-                        inpaint_head_model_path, inpaint_patch_model_path = modules.config.downloading_inpaint_models(
-                            advanced_parameters.inpaint_engine)
-                        base_model_additional_loras += [(inpaint_patch_model_path, 1.0)]
-                        print(f'[Inpaint] Current inpaint model is {inpaint_patch_model_path}')
-                        if refiner_model_name == 'None':
-                            use_synthetic_refiner = True
-                            refiner_switch = 0.5
-                    else:
-                        inpaint_head_model_path, inpaint_patch_model_path = None, None
-                        print(f'[Inpaint] Parameterized inpaint is disabled.')
-                    if inpaint_additional_prompt != '':
-                        if prompt == '':
-                            prompt = inpaint_additional_prompt
-                        else:
-                            prompt = inpaint_additional_prompt + '\n' + prompt
-                    goals.append('inpaint')
             if current_tab == 'ip' or \
                     advanced_parameters.mixing_image_prompt_and_inpaint or \
                     advanced_parameters.mixing_image_prompt_and_vary_upscale:
@@ -356,11 +257,6 @@ def worker():
 
         if advanced_parameters.overwrite_height > 0:
             height = advanced_parameters.overwrite_height
-
-        print(f'[Parameters] Sampler = {sampler_name} - {scheduler_name}')
-        print(f'[Parameters] Steps = {steps} - {switch}')
-
-        progressbar(async_task, 1, 'Initializing ...')
 
         if not skip_prompt_processing:
 
@@ -548,96 +444,6 @@ def worker():
             height = H * 8
             print(f'Final resolution is {str((height, width))}.')
 
-        if 'inpaint' in goals:
-            if len(outpaint_selections) > 0:
-                H, W, C = inpaint_image.shape
-                if 'top' in outpaint_selections:
-                    inpaint_image = np.pad(inpaint_image, [[int(H * 0.3), 0], [0, 0], [0, 0]], mode='edge')
-                    inpaint_mask = np.pad(inpaint_mask, [[int(H * 0.3), 0], [0, 0]], mode='constant',
-                                          constant_values=255)
-                if 'bottom' in outpaint_selections:
-                    inpaint_image = np.pad(inpaint_image, [[0, int(H * 0.3)], [0, 0], [0, 0]], mode='edge')
-                    inpaint_mask = np.pad(inpaint_mask, [[0, int(H * 0.3)], [0, 0]], mode='constant',
-                                          constant_values=255)
-
-                H, W, C = inpaint_image.shape
-                if 'left' in outpaint_selections:
-                    inpaint_image = np.pad(inpaint_image, [[0, 0], [int(H * 0.3), 0], [0, 0]], mode='edge')
-                    inpaint_mask = np.pad(inpaint_mask, [[0, 0], [int(H * 0.3), 0]], mode='constant',
-                                          constant_values=255)
-                if 'right' in outpaint_selections:
-                    inpaint_image = np.pad(inpaint_image, [[0, 0], [0, int(H * 0.3)], [0, 0]], mode='edge')
-                    inpaint_mask = np.pad(inpaint_mask, [[0, 0], [0, int(H * 0.3)]], mode='constant',
-                                          constant_values=255)
-
-                inpaint_image = np.ascontiguousarray(inpaint_image.copy())
-                inpaint_mask = np.ascontiguousarray(inpaint_mask.copy())
-                advanced_parameters.inpaint_strength = 1.0
-                advanced_parameters.inpaint_respective_field = 1.0
-
-            denoising_strength = advanced_parameters.inpaint_strength
-
-            inpaint_worker.current_task = inpaint_worker.InpaintWorker(
-                image=inpaint_image,
-                mask=inpaint_mask,
-                use_fill=denoising_strength > 0.99,
-                k=advanced_parameters.inpaint_respective_field
-            )
-
-            if advanced_parameters.debugging_inpaint_preprocessor:
-                yield_result(async_task, inpaint_worker.current_task.visualize_mask_processing(),
-                             do_not_show_finished_images=True)
-                return
-
-            progressbar(async_task, 13, 'VAE Inpaint encoding ...')
-
-            inpaint_pixel_fill = core.numpy_to_pytorch(inpaint_worker.current_task.interested_fill)
-            inpaint_pixel_image = core.numpy_to_pytorch(inpaint_worker.current_task.interested_image)
-            inpaint_pixel_mask = core.numpy_to_pytorch(inpaint_worker.current_task.interested_mask)
-
-            candidate_vae, candidate_vae_swap = pipeline.get_candidate_vae(
-                steps=steps,
-                switch=switch,
-                denoise=denoising_strength,
-                refiner_swap_method=refiner_swap_method
-            )
-
-            latent_inpaint, latent_mask = core.encode_vae_inpaint(
-                mask=inpaint_pixel_mask,
-                vae=candidate_vae,
-                pixels=inpaint_pixel_image)
-
-            latent_swap = None
-            if candidate_vae_swap is not None:
-                progressbar(async_task, 13, 'VAE SD15 encoding ...')
-                latent_swap = core.encode_vae(
-                    vae=candidate_vae_swap,
-                    pixels=inpaint_pixel_fill)['samples']
-
-            progressbar(async_task, 13, 'VAE encoding ...')
-            latent_fill = core.encode_vae(
-                vae=candidate_vae,
-                pixels=inpaint_pixel_fill)['samples']
-
-            inpaint_worker.current_task.load_latent(
-                latent_fill=latent_fill, latent_mask=latent_mask, latent_swap=latent_swap)
-
-            if inpaint_parameterized:
-                pipeline.final_unet = inpaint_worker.current_task.patch(
-                    inpaint_head_model_path=inpaint_head_model_path,
-                    inpaint_latent=latent_inpaint,
-                    inpaint_latent_mask=latent_mask,
-                    model=pipeline.final_unet
-                )
-
-            if not advanced_parameters.inpaint_disable_initial_latent:
-                initial_latent = {'samples': latent_fill}
-
-            B, C, H, W = latent_fill.shape
-            height, width = H * 8, W * 8
-            final_height, final_width = inpaint_worker.current_task.image.shape[:2]
-            print(f'Final resolution is {str((final_height, final_width))}, latent is {str((height, width))}.')
-
         if 'cn' in goals:
             for task in cn_tasks[flags.cn_canny]:
                 cn_img, cn_stop, cn_weight = task
@@ -667,7 +473,7 @@ def worker():
                 cn_img, cn_stop, cn_weight = task
                 cn_img = HWC3(cn_img)
 
-                # https://github.com/tencent-ailab/IP-Adapter/blob/d580c50a291566bbf9fc7ac0f760506607297e6d/README.md?plain=1#L75
+                
                 cn_img = resize_image(cn_img, width=224, height=224, resize_mode=0)
 
                 task[0] = ip_adapter.preprocess(cn_img, ip_adapter_path=ip_adapter_path)
@@ -682,7 +488,7 @@ def worker():
                 if not advanced_parameters.skipping_cn_preprocessor:
                     cn_img = extras.face_crop.crop_image(cn_img)
 
-                # https://github.com/tencent-ailab/IP-Adapter/blob/d580c50a291566bbf9fc7ac0f760506607297e6d/README.md?plain=1#L75
+                
                 cn_img = resize_image(cn_img, width=224, height=224, resize_mode=0)
 
                 task[0] = ip_adapter.preprocess(cn_img, ip_adapter_path=ip_adapter_face_path)

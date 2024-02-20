@@ -28,7 +28,7 @@ def remove_pattern(x, pattern):
     return x
 
 
-class FooocusExpansion:
+class BTGenExpansion:
     def __init__(self):
         self.tokenizer = AutoTokenizer.from_pretrained(path_btgen_expansion)
 

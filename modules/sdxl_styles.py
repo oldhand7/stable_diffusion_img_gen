@@ -50,8 +50,8 @@ for styles_file in styles_files:
         print(f'Failed to load style file {styles_file}')
 
 style_keys = list(styles.keys())
-fooocus_expansion = "Fooocus V2"
-legal_style_names = [fooocus_expansion] + style_keys
+btgen_expansion = "Fooocus V2"
+legal_style_names = [btgen_expansion] + style_keys
 
 
 def apply_style(style, positive):
