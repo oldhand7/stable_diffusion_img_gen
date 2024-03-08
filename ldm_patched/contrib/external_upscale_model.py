@@ -1,4 +1,4 @@
-# https://github.com/comfyanonymous/ComfyUI/blob/master/nodes.py 
+
 
 import os
 from ldm_patched.pfn import model_loading

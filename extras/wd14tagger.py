@@ -1,5 +1,5 @@
 # https://huggingface.co/spaces/SmilingWolf/wd-v1-4-tags
-# https://github.com/pythongosssss/ComfyUI-WD14-Tagger/blob/main/wd14tagger.py
+
 
 # {
 #     "wd-v1-4-moat-tagger-v2": "https://huggingface.co/SmilingWolf/wd-v1-4-moat-tagger-v2",

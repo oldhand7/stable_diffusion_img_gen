@@ -95,7 +95,6 @@ attn_group.add_argument("--attention-pytorch", action="store_true")
 parser.add_argument("--disable-xformers", action="store_true")
 
 vram_group = parser.add_mutually_exclusive_group()
-vram_group.add_argument("--always-gpu", action="store_true")
 vram_group.add_argument("--always-high-vram", action="store_true")
 vram_group.add_argument("--always-normal-vram", action="store_true")
 vram_group.add_argument("--always-low-vram", action="store_true")

@@ -1,6 +1,6 @@
-from modules.expansion import FooocusExpansion
+from modules.expansion import BTGenExpansion
 
-expansion = FooocusExpansion()
+expansion = BTGenExpansion()
 
 text = 'a handsome man'
 

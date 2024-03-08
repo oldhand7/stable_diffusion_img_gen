@@ -1,4 +1,4 @@
-# https://github.com/comfyanonymous/ComfyUI/blob/master/nodes.py 
+
 
 import torch
 from ldm_patched.contrib.external import MAX_RESOLUTION
